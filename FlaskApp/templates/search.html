@@ -7,20 +7,24 @@
     <title>Image search</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
- 
   <body>
   <div class="wrapper">
 
     <div class="gallery">
-        <div class="header">
-            <h3>SEARCH</h3>
+        <div class="gallery__header">
+            <h3>GALLERY</h3>
+            
+            <select id="search-field"></select>
+            <input id="search-btn" type="button" value="SEARCH">
         </div>
-        <select id="search-field">
-        </select>
-        <input id="search-btn" type="button" value="SEARCH">
-        <br><br>
 
-        <div id="image-container" class="images"></div>     
+        <br><br>
+        <!--selected tags will be generated below-->
+        <div id="tag-container" class="tags">
+        </div>
+        <br><br>
+        <!--images returned by the search function will be generated below-->
+        <div id="image-container" class="gallery__images"></div>     
     </div>
 
   </div>  

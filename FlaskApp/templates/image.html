@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Image</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var imgID = '{{image}}';
+    </script>
+  </head>
+  <body>
+  <div class="wrapper">
+    <div class="gallery">
+        <!--<a href="javascript:history.back()">BACK</a>-->
+        <a href="/">BACK</a>
+        <br><br>
+        <div class="image-content">
+            
+            <!--display image-->
+            <img class="image-content__image" src="/static/images/{{ image }}.jpg">
+          
+            <!--display image details-->
+            <div class="image-content__details">
+                DETAILS<br>
+                id: {{image}}
+            </div>
+
+            <!--show tags related to the image-->
+            <div class="image-content__tags" id="tag-container" style="display: inline;">
+                <div class="tag"><p>Nature</p></div>
+            </div>
+
+            <!--recommended images based on selected metric-->
+            <div class="image-content__recs">
+                <p>SIMILAR IMAGES</p>
+                <div class="rec__tabs">
+                    <div data-tab="category" class="rec__tab rec__tab--active">Category</div>
+                    <div data-tab="colour" class="rec__tab">Colour</div>
+                </div>
+                
+                <!--recommended images will be generated below-->
+                <div id="rec-image-container" class="rec__images">
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+  </div>  
+  </body>
+  <!--<script src="/static/scripts/search.js"></script>-->
+  <script src="/static/scripts/recommend.js"></script>
+</html>
