@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Image search</title>
+    <script src="/static/scripts/jquery-3.3.1.min.js"></script>
+    <script src="/static/scripts/jquery.autocomplete.js"></script>
+    <script type="text/javascript">
+      //this will probably show some errors on your editor. Don't mind it.
+      var tags = {{labels|tojson|safe}};
+    </script>
+  </head>
+  <body>
+  <div class="wrapper">
+
+    <div class="gallery">
+        <div class="gallery__header">
+            <h3>SEARCH</h3>
+            
+            <!--<select id="search-field">-->
+            <!--
+                {% for label in labels %}
+                    <option value="{{label.id}}">{{label.name}}</option>
+                {% endfor %}
+            -->
+            <!--</select>-->
+
+            <input type="text" name="label" placeholder="Search for labels" class="search-field" id="autocomplete"/>
+            <!--<input id="search-btn" type="button" value="SEARCH">-->
+        </div>
+
+        <br><br>
+        <!--selected tags will be generated below-->
+        <div id="tag-container" class="tags">
+        </div>
+        <br><br>
+        <!--images returned by the search function will be generated below-->
+        <div id="image-container" class="gallery__images"></div>     
+    </div>
+
+  </div>  
+  </body>
+  <script src="/static/scripts/search.js"></script>
+</html>

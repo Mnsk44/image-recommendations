@@ -1,32 +1,33 @@
 
-let tags = ["dragonfly", "moss", "mountain", "mountain2", "mountain3", "guitar"];
-let select = $("#search-field");
+//let select = $("#search-field");
 let imgCont = $("#image-container");
 var selectedTags = new Set();
 
-//for testing
-let images = ["dragonfly", "moss", "mountain", "mountain2", "mountain3", "guitar"];
+//let images = ["dragonfly", "moss", "mountain", "mountain2", "mountain3", "guitar"];
 
 $(document).ready(function() {
-    select.append('<option selected="true" disabled>Choose tag</option>');
+    /*select.append('<option selected="true" disabled>Choose tag</option>');
     select.prop('selectedIndex', 0);
     $.each(tags, function(i) {
-        select.append(`<option value="${i}">${tags[i]}</option>`);
+        select.append(`<option value="${tags[i].id}">${tags[i].name}</option>`);
     })
+    */
 })
 
+/*
 $("#search-btn").click(function(event) {
     addTag(select.val());
 })
+*/
 
 $("#tag-container").on("click", ".tag", function(event) {
     removeTag(event);
 })
 
-function addTag(label) {
-    if (!selectedTags.has(label) && label !== null) {
-        selectedTags.add(label);
-        $("#tag-container").append(`<div data-index="${label}" class="tag"><p>${tags[label]}</p></div>`);
+function addTag(id, name) {
+    if (!selectedTags.has(id) && id !== null) {
+        selectedTags.add(id);
+        $("#tag-container").append(`<div data-index="${id}" class="tag"><p>${name}</p></div>`);
         searchImages(selectedTags);
     }
 }
@@ -52,7 +53,7 @@ function searchImages(tags) {
                 console.log("palautus :", data);
                 imgCont.empty();
                 for (let i = 0; i < data.length; i++) {
-                    imgCont.append(`<div class="gallery__image"><a href="/image/${images[data[i]]}"><img src="/static/images/${images[data[i]]}.jpg"></a></div>`);
+                    imgCont.append(`<div class="gallery__image"><a href="/image/${data[i].url}"><img src="/static/images/${data[i].url}.jpg"></a></div>`);
                 }
             },
             error: function (req, status, error) {
@@ -62,3 +63,10 @@ function searchImages(tags) {
     }
     else imgCont.empty();
 }
+
+$('#autocomplete').autocomplete({
+    lookup: tags,
+    onSelect: function (suggestion) {
+        addTag(suggestion.data, suggestion.value)
+    }
+});
