@@ -9,9 +9,9 @@ from skimage.color import deltaE_ciede94, rgb2lab
 from skimage.transform import resize
 
 import datetime
-"""
+
 import DBConnection.py as db
-"""
+
 
 """ This will change the working directory to where the small pics are for the deltaE func """
 path = "colours/smallpics/"
@@ -21,7 +21,27 @@ images = os.listdir()
 
 # Define as Jaccard Distance == 1 - Jacc sim, to be the same way as deltaE (1 for not equal)
 def jaccardDistance(image1, image2):
-    return 1
+    def getLabels(image, sort):
+        with db.connect_to_database() as cursor:
+            cursor.execute("""SELECT labels, validity
+                            FROM omaluokittelu
+                            WHERE imagepath = %s;
+                            """, (image,))
+            labels = []
+            for i in cursor:
+                labels.append([i[0], i[1]])
+            if sort:
+                labels = sorted(labels, key=lambda x:x[1], reverse=True) #sort by validity
+                first_label = labels[0][0] #get the most important label
+            return(set(item[0] for item in labels), first_label)
+    
+    A, f_label = getLabels(image1, 1)
+    B = getLabels(image2, 0)[0]
+    
+    if f_label not in B: #if image1's most important label is not in image2's labels: return max distance
+        return 1
+    else:
+        return 1 - (len(A & B)) / (len(A | B))
 
 
 def deltaE(image1, image2):
@@ -86,7 +106,16 @@ for img1 in images:
                                 for pic, val in combined.items()], key=lambda x: x[1]))
     print()
 
-    """ Substitute print with eg. db inserts
+    ''' Substitute print with eg. db inserts
     with db.connect_to_database() as cursor:
-        cursor.execute('SELECT version()')
-    """
+        for pic, val in deltas.items():
+            cursor.execute("""INSERT INTO recommendations (image1, image2, method, value)
+                             VALUES (%s %s %s %s %s)""", (img1, pic, "deltae", val))
+        for pic, val in jaccs.items():
+            cursor.execute("""INSERT INTO recommendations (image1, image2, method, value)
+                             VALUES (%s %s %s %s %s)""", (img1, pic, "jaccard", val))
+        for pic, val in combined.items():
+            cursor.execute("""INSERT INTO recommendations (image1, image2, method, value)
+                             VALUES (%s %s %s %s %s)""", (img1, pic, "combined", val))
+    
+    '''
