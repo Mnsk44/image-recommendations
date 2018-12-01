@@ -10,7 +10,7 @@ from skimage.transform import resize
 
 import datetime
 
-import DBConnection.py as db
+import DBConnection as db
 
 
 """ This will change the working directory to where the small pics are for the deltaE func """
@@ -28,17 +28,19 @@ def jaccardDistance(image1, image2):
                             WHERE imagepath = %s;
                             """, (image,))
             labels = []
+            first_label = ""
             for i in cursor:
                 labels.append([i[0], i[1]])
             if sort:
-                labels = sorted(labels, key=lambda x:x[1], reverse=True) #sort by validity
-                first_label = labels[0][0] #get the most important label
+                # sort by validity
+                labels = sorted(labels, key=lambda x: x[1], reverse=True)
+                first_label = labels[0][0]  # get the most important label
             return(set(item[0] for item in labels), first_label)
-    
+
     A, f_label = getLabels(image1, 1)
     B = getLabels(image2, 0)[0]
-    
-    if f_label not in B: #if image1's most important label is not in image2's labels: return max distance
+
+    if f_label not in B:  # if image1's most important label is not in image2's labels: return max distance
         return 1
     else:
         return 1 - (len(A & B)) / (len(A | B))

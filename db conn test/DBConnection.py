@@ -50,6 +50,7 @@ class connect_to_database():
         if self.cur is not None:
             self.cur.close()
         if self.conn is not None:
+            self.conn.commit()
             self.conn.close()
             print('Database connection closed.')
 
