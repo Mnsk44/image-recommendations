@@ -10,9 +10,6 @@ from skimage.transform import resize
 
 import datetime
 
-#import DBConnection as db
-
-
 """ Initialization """
 print("Starting to load data into memory")
 
@@ -29,29 +26,39 @@ for img in images:
     except ValueError:
         print("Error in file", img)
 
+ilabels = pd.read_csv("../datatemp.csv", sep=",")
 imagelabels = {}
+for idx, img in ilabels.iterrows():
+    if img[0] in imagelabels.keys():
+        imagelabels[img[0]].append((img[1].split("~")[0].strip(), img[2]))
+    else:
+        imagelabels[img[0]] = [(img[1].split("~")[0].strip(), img[2])]
+
+
+workorder = []
+with open("../workorder.txt") as todo:
+    workorder = [img.strip("\n") for img in todo.readlines()]
+
+
+with open("../output.csv", "w") as output:
+    print("image1,image2,type,value", file=output)
 
 print("Load ended succesfully (if it didn't crash by now)")
+
+""" Initialization ends """
 
 # Define as Jaccard Distance == 1 - Jacc sim, to be the same way as deltaE (1 for not equal)
 
 
 def jaccardDistance(image1, image2):
     def getLabels(image, sort):
-        with db.connect_to_database() as cursor:
-            cursor.execute("""SELECT labels, validity
-                            FROM omaluokittelu
-                            WHERE imagepath = %s;
-                            """, (image,))
-            labels = []
-            first_label = ""
-            for i in cursor:
-                labels.append([i[0], i[1]])
-            if sort:
-                # sort by validity
-                labels = sorted(labels, key=lambda x: x[1], reverse=True)
-                first_label = labels[0][0]  # get the most important label
-            return(set(item[0] for item in labels), first_label)
+        labels = imagelabels[image]
+        first_label = ""
+        if sort:
+            # sort by validity
+            labels = sorted(labels, key=lambda x: x[1], reverse=True)
+            first_label = labels[0][0]  # get the most important label
+        return(set(item[0] for item in labels), first_label)
 
     A, f_label = getLabels(image1, 1)
     B = getLabels(image2, 0)[0]
@@ -96,44 +103,29 @@ def updateRecommendations(newname, newvalue, current):
     return
 
 
-for img1 in images:
+for img1 in workorder:
     deltas = {"No recommendations": 1}
     jaccs = {"No recommendations": 1}
     combined = {"No recommendations": 1}
 
     for img2 in filter(lambda x: x != img1, images):
         delta = deltaE(imagedata[img1], imagedata[img2])
-        #jacc = jaccardDistance(img1, img2)
-        #comb = 0.7*jacc + 0.3*delta
+        jacc = jaccardDistance(img1, img2)
+        comb = 0.7*jacc + 0.3*delta
 
         if betterRecommendation(delta, deltas):
             updateRecommendations(img2, delta, deltas)
 
-        """if betterRecommendation(jacc, jaccs):
+        if betterRecommendation(jacc, jaccs):
             updateRecommendations(img2, jacc, jaccs)
 
         if betterRecommendation(comb, combined):
             updateRecommendations(img2, comb, combined)
-"""
-    print("For image:", img1)
-    print("DeltaE:", *sorted([(pic, val)
-                              for pic, val in deltas.items()], key=lambda x: x[1]))
-    """print("Jaccard:", *sorted([(pic, val)
-                               for pic, val in jaccs.items()], key=lambda x: x[1]))
-    print("Combined:", *sorted([(pic, val)
-                                for pic, val in combined.items()], key=lambda x: x[1]))
-    print()
-"""
-    ''' Substitute print with eg. db inserts
-    with db.connect_to_database() as cursor:
+
+    with open("../output.csv", "a") as output:
         for pic, val in deltas.items():
-            cursor.execute("""INSERT INTO recommendations (image1, image2, type, value)
-                             VALUES (%s, %s, %s, %s)""", (img1, pic, "deltae", val))
+            print(img1, pic, "deltae", val, sep=",", file=output)
         for pic, val in jaccs.items():
-            cursor.execute("""INSERT INTO recommendations (image1, image2, type, value)
-                             VALUES (%s, %s, %s, %s)""", (img1, pic, "jaccard", val))
+            print(img1, pic, "jaccard", val, sep=",", file=output)
         for pic, val in combined.items():
-            cursor.execute("""INSERT INTO recommendations (image1, image2, type, value)
-                             VALUES (%s, %s, %s, %s)""", (img1, pic, "combined", val))
-    
-    '''
+            print(img1, pic, "combined", val, sep=",", file=output)
