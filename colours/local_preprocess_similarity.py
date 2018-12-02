@@ -30,9 +30,9 @@ ilabels = pd.read_csv("../datatemp.csv", sep=",")
 imagelabels = {}
 for idx, img in ilabels.iterrows():
     if img[0] in imagelabels.keys():
-        imagelabels[img[0]].append((img[1].split("~")[0].strip(), img[2]))
+        imagelabels[img[0]].append((img[1], img[2]))
     else:
-        imagelabels[img[0]] = [(img[1].split("~")[0].strip(), img[2])]
+        imagelabels[img[0]] = [(img[1], img[2])]
 
 
 workorder = []
