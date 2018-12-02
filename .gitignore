@@ -1,3 +1,7 @@
 *.egg
 *.egg-info
+*.jpg
+*.jpeg
+*.JPG
+*.JPEG
 __pycache__

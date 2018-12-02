@@ -7,29 +7,28 @@
     <title>Image</title>
     <script src="/static/scripts/jquery-3.3.1.min.js"></script>
     <script type="text/javascript">
-        var imgID = {{image|tojson|safe}};
+        var imgUrl = {{image|tojson|safe}};
     </script>
   </head>
   <body>
   <div class="wrapper">
     <div class="gallery">
-        <!--<a href="javascript:history.back()">BACK</a>-->
         <a href="/">BACK</a>
         <br><br>
         <div class="image-content">
             
             <!--display image-->
-            <img class="image-content__image" src="/static/images/{{ image }}.jpg">
+            <img class="image-content__image" src="/static/images/{{ image }}">
           
             <!--display image details-->
             <div class="image-content__details">
                 DETAILS<br>
-                id: {{image}}
+                Path: {{image}}
             </div>
 
             <!--show tags related to the image-->
             <div class="image-content__tags" id="tag-container" style="display: inline;">
-                <div class="tag"><p>Nature</p></div>
+                <!--<div class="tag"><p>Nature</p></div>-->
             </div>
 
             <!--recommended images based on selected metric-->
@@ -37,7 +36,8 @@
                 <p>SIMILAR IMAGES</p>
                 <div class="rec__tabs">
                     <div data-tab="category" class="rec__tab rec__tab--active">Category</div>
-                    <div data-tab="colour" class="rec__tab">Colour</div>
+                    <div data-tab="colour" class="rec__tab">Colour scheme</div>
+                    <div data-tab="combined" class="rec__tab">Combined</div>
                 </div>
                 
                 <!--recommended images will be generated below-->

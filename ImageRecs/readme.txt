@@ -1,4 +1,4 @@
-to run the app (+ use dev environment), use these commands:
+to run the app (+ use dev environment), use these commands from this folder:
 
 (windows cmd)
 set FLASK_APP=ImageRecs
