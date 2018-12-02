@@ -64,18 +64,22 @@ def jaccardDistance(image1, image2):
 
 def deltaE(image1, image2):
 
-    img1 = rgb2lab(image1)
-    img2 = rgb2lab(image2)
+    try:
+        img1 = rgb2lab(image1)
+        img2 = rgb2lab(image2)
 
-    """ Very generalized view that deltaE generally is between 0-100:
-        Normalize with that range to make this comparable with jaccard,
-        and as we are trying to find the minimal for this, it doesn't actually
-        matter if some value is over 100 """
-    return (mean([deltaE_ciede94(img1, img2).mean(),
-                  deltaE_ciede94(img2, img1).mean()]) / 100)
-
+        """ Very generalized view that deltaE generally is between 0-100:
+            Normalize with that range to make this comparable with jaccard,
+            and as we are trying to find the minimal for this, it doesn't actually
+            matter if some value is over 100 """
+        return (mean([deltaE_ciede94(img1, img2).mean(),
+                      deltaE_ciede94(img2, img1).mean()]) / 100)
+    except ValueError:
+        return 1
 
 # Keep only 10 best in store
+
+
 def betterRecommendation(new, current):
     if new > max(current.values()) and len(current) == 10:
         return False
@@ -103,27 +107,27 @@ for img1 in images:
 
     for img2 in filter(lambda x: x != img1, images):
         delta = deltaE(imagedata[img1], imagedata[img2])
-        #jacc = jaccardDistance(img1, img2)
-        #comb = 0.7*jacc + 0.3*delta
+        jacc = jaccardDistance(img1, img2)
+        comb = 0.7*jacc + 0.3*delta
 
         if betterRecommendation(delta, deltas):
             updateRecommendations(img2, delta, deltas)
 
-        """if betterRecommendation(jacc, jaccs):
+        if betterRecommendation(jacc, jaccs):
             updateRecommendations(img2, jacc, jaccs)
 
         if betterRecommendation(comb, combined):
             updateRecommendations(img2, comb, combined)
-"""
+
     print("For image:", img1)
     print("DeltaE:", *sorted([(pic, val)
                               for pic, val in deltas.items()], key=lambda x: x[1]))
-    """print("Jaccard:", *sorted([(pic, val)
+    print("Jaccard:", *sorted([(pic, val)
                                for pic, val in jaccs.items()], key=lambda x: x[1]))
     print("Combined:", *sorted([(pic, val)
                                 for pic, val in combined.items()], key=lambda x: x[1]))
     print()
-"""
+
     ''' Substitute print with eg. db inserts
     with db.connect_to_database() as cursor:
         for pic, val in deltas.items():
