@@ -103,7 +103,8 @@ def updateRecommendations(newname, newvalue, current):
     return
 
 
-for img1 in workorder:
+for idx, img1 in enumerate(workorder):
+    print("Processing image", idx, "out of", len(workorder), end="\r")
     deltas = {"No recommendations": 1}
     jaccs = {"No recommendations": 1}
     combined = {"No recommendations": 1}
