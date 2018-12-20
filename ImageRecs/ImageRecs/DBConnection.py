@@ -3,7 +3,7 @@ import psycopg2
 from configparser import ConfigParser
 
 
-def config(filename='db_conn.ini', section='postgresql'):
+def config(filename='ImageRecs/db_conn.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file

@@ -22,21 +22,25 @@
           
             <!--display image details-->
             <div class="image-content__details">
-                DETAILS<br>
-                Path: {{image}}
+                <p>IMAGE DETAILS</p>
+                <p>Path: {{image}}</p>
+                <p id="image-width"></p>
+                <p id="image-height"></p>
             </div>
 
             <!--show tags related to the image-->
             <div class="image-content__tags" id="tag-container" style="display: inline;">
-                <!--<div class="tag"><p>Nature</p></div>-->
+                {% for l in labels %}
+                <div class="tag"><p>{{ l.label }}</p></div>
+                {% endfor %}
             </div>
 
             <!--recommended images based on selected metric-->
             <div class="image-content__recs">
                 <p>SIMILAR IMAGES</p>
                 <div class="rec__tabs">
-                    <div data-tab="category" class="rec__tab rec__tab--active">Category</div>
-                    <div data-tab="colour" class="rec__tab">Colour scheme</div>
+                    <div data-tab="jaccard" class="rec__tab rec__tab--active">Category</div>
+                    <div data-tab="deltae" class="rec__tab">Colour scheme</div>
                     <div data-tab="combined" class="rec__tab">Combined</div>
                 </div>
                 

@@ -1,6 +1,6 @@
 from flask import render_template, request
 from ImageRecs import app
-from ImageRecs.recs import searchImages, getRecommendations
+from ImageRecs.recs import searchImages, getRecommendations, getLabels
 import json
 
 @app.route("/", methods=['GET'])
@@ -17,13 +17,19 @@ def search_images():
         labels = request.form.getlist("data[]")
         #search for images by their labels
         images = searchImages(labels)
-        return images
+        return json.dumps(images)
+
+@app.route("/image", methods=['GET'])
+def render_links():
+    if request.method == "GET":
+        return render_template('links.html')
+
 
 @app.route("/image/<url>", methods=['GET'])
 def render_image(url):
     if request.method == "GET":
-        #getLabels(url)
-        return render_template('image.html', image=url)
+        labels = getLabels(url)
+        return render_template('image.html', image=url, labels=labels)
 
 @app.route("/image/recommend", methods=['POST'])
 def recommend_images():

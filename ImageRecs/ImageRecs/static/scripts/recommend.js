@@ -1,9 +1,19 @@
 
 let recImgCont = $("#rec-image-container");
-var selectedMethod = "category";
+var selectedMethod = "jaccard";
+var imgWidth = $("#image-width");
+var imgHeight = $("#image-height");
 
 $(document).ready(function() {
+    var im = new Image();
+    im.src = "/static/images/" + imgUrl;
     getRecommendations(selectedMethod, imgUrl);
+
+    im.onload = function() {
+        imgWidth.text("Width: " + String(this.width));
+        imgHeight.text("Height: " + String(this.height));
+    };
+    console.log(im);
 })
 
 $(".rec__tab").click(function(event) {
@@ -18,7 +28,7 @@ function changeMethod(e) {
 }
 
 function getRecommendations(method, url) {
-    console.log("lähetettävä data: ", method, id);
+    console.log("lähetettävä data: ", method, url);
     $.ajax({
         type : "POST",
         url : "recommend",
@@ -30,13 +40,13 @@ function getRecommendations(method, url) {
         success : function(data) {
             console.log("palautus :", data);
             recImgCont.empty();
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 10; i++) {
                 recImgCont.append(`
                     <div class="rec__image">
                         <a href="/image/${data[i].url}">
                             <img src="/static/images/${data[i].url}">
                             <div class="similarity__container">
-                                <div class="similarity__bar" style="width:${data[i].sim*100}%"></div>
+                                <div class="similarity__bar" style="width:${(1 - data[i].value) * 100}%"></div>
                             </div>
                         </a>
                     </div>
